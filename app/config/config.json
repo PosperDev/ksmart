@@ -1,0 +1,37 @@
+{
+    "license": "3",
+    "prefer_db": "mariadb",
+    "databases": {
+        "mariadb": {
+            "host": "localhost",
+            "port": "",
+            "username": "",
+            "password": "",
+            "database": "",
+            "command": ""
+        },
+        "mysql": {
+            "host": "localhost2",
+            "port": "3306",
+            "username": "your_username",
+            "password": "your_password",
+            "database": "your_database",
+            "command": "SELECT * FROM your_database"
+        },
+        "sqlserver": {
+            "host": "SQLEXPRESS",
+            "port": "3306",
+            "username": "",
+            "password": "",
+            "database": "test",
+            "command": "",
+            "auth": "wa"
+        },
+        "excel": {
+            "file_path": "path\/to\/your\/excel_file.xlsx",
+            "sheet_name": "Sheet1",
+            "command": "SELECT * FROM [Sheet1$]"
+        }
+    },
+    "time": "2"
+}
