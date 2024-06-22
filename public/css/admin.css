@@ -1,0 +1,98 @@
+.tab-nav {
+    border-bottom: 1px solid #ddd;
+}
+
+.tab-nav a {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-nav a.active {
+    border-color: #333;
+}
+
+.db-form {
+    display: none;
+}
+
+.loading {
+    display: none;
+}
+
+.chat-window {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 450px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.chat-header {
+    background: #1a202c;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.chat-header button {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.chat-body {
+    padding: 10px;
+    height: calc(100% - 100px);
+    overflow-y: auto;
+}
+
+.chat-footer {
+    padding: 10px;
+    background: #f3f3f3;
+    display: flex;
+    align-items: center;
+}
+
+.chat-footer textarea {
+    flex-grow: 1;
+    padding: 10px;
+    margin-right: 10px;
+    resize: none;
+}
+
+.chat-footer button {
+    padding: 10px 15px;
+    background-color: #1a202c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.fixed-button {
+    background: #1a202c;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 50%;
+    font-size: 20px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border: none;
+    cursor: pointer;
+}

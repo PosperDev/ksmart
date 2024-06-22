@@ -1,4 +1,55 @@
 
+function showTab(tabName) {
+    var tabs = document.getElementsByClassName('tab-content');
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].style.display = 'none';
+    }
+    var tabLinks = document.getElementsByClassName('tab-link');
+    for (var i = 0; i < tabLinks.length; i++) {
+        tabLinks[i].classList.remove('active');
+    }
+    document.getElementById(tabName + '-tab').style.display = 'block';
+    document.querySelector('.tab-nav a[href="#"][onclick="showTab(\'' + tabName + '\')"]').classList.add('active');
+}
+
+// General
+document.getElementById("general-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const time = document.getElementById("time").value.trim();
+    const slideTime = document.getElementById("slideTime").value.trim();
+    const show = document.getElementById("show").value;
+
+    console.log(show);
+
+    const config = {
+        time: time,
+        slideTime: slideTime,
+        show: show
+    };
+
+    console.log(config);  // Para verificar que el objeto tiene la estructura correcta
+
+    try {
+        const response = await fetch('../../config/configManager.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(config)
+        });
+
+        if (response.ok) {
+            alert('Configuración guardada exitosamente.');
+        } else {
+            alert('Error al guardar la configuración.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Ocurrió un error al guardar la configuración.');
+    }
+});
+
 document.querySelectorAll('.db-form').forEach(form => {
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -36,10 +87,25 @@ document.querySelectorAll('.db-form').forEach(form => {
     });
 });
 
+let currentVisibleForm = null;
+
 function showForm(dbType) {
     const forms = document.querySelectorAll('.db-form');
+    const targetForm = document.getElementById(dbType + '-form');
+
+    // If the clicked form is currently visible, hide it
+    if (targetForm === currentVisibleForm) {
+        targetForm.style.display = 'none';
+        currentVisibleForm = null;
+        return;
+    }
+
+    // Hide all forms
     forms.forEach(form => form.style.display = 'none');
-    document.getElementById(dbType + '-form').style.display = 'block';
+
+    // Show the target form
+    targetForm.style.display = 'block';
+    currentVisibleForm = targetForm;
 }
 
 async function testConnection() {

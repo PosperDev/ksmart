@@ -1,0 +1,120 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.carousel-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px);
+    z-index: -1;
+    /* Poner la imagen de fondo detrás del contenido */
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item {
+    min-width: 100%;
+    transition: opacity 0.5s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: auto;
+}
+
+.w-full {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* Estilos para el input barcode */
+#barcode {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    /* Inicialmente transparente */
+    z-index: -1;
+    /* Detrás de todos los elementos */
+    transition: opacity 0.3s ease-in-out;
+    /* Transición suave */
+}
+
+#barcode.active {
+    opacity: 1;
+    /* Hacer visible */
+    z-index: 1;
+    /* Colocar sobre otros elementos */
+}
+
+#barcodeLabel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    z-index: -1;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#barcodeLabel.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+/* Estilos para el logo y el footer */
+.logo {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.hidden {
+    display: none;
+}

@@ -1,208 +1,163 @@
-<!DOCTYPE html>
-<html>
-<head>
-<link rel="stylesheet" href="styles.css">
-<title>Kiosco Posper</title>
-<script src= 
-"https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"> 
-</script> 
-</head>
-<body onload="hideinfo()">
+<?php
+session_start();
 
-<div id="vprecio">
-	
-	<img class="logo" src="<?php $dir = 'pimg/logo/'; $dir_handle = opendir($dir);  while(($file_name = readdir($dir_handle)) !== false) 
-      	{ if (strlen($file_name)>3) { echo $dir.$file_name; }}?>">
-	<br><h5 id="tituloprecio">PRECIO:</h5><br>
-	<p><h1 id="preciov"></h1></p>
-	<p><h4 id="nombrev"></h4></p>
-	<p><h8 id="descripv"></h3></p>
-		<div class="abajo">
-			<img src="<?php $dirf = 'pimg/footer/'; $dirf_handle = opendir($dirf);  while(($file_name = readdir($dirf_handle)) !== false) 
-      { if (strlen($file_name)>3) { echo $dirf.$file_name; }}?>">
+// Leer el archivo JSON
+$jsonString = file_get_contents('../../config/config.json');
+
+// Decodificar el JSON en un array PHP
+$config = json_decode($jsonString, true);
+
+// Obtener el valor de 'time' y multiplicarlo por 1000
+$timeInMilliseconds = $config['time'] * 1000;
+
+// Obtener el valor de 'time' y multiplicarlo por 1000
+$timeInMilliseconds2 = $config['slideTime'] * 1000;
+
+// Asignar el valor a la variable de sesión
+$_SESSION['showTime'] = $timeInMilliseconds;
+
+$_SESSION['slideTime'] = $timeInMilliseconds2;
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Client</title>
+	<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link href="../../../public/css/client.css" rel="stylesheet">
+</head>
+
+<body class="bg-white-100">
+	<!-- Carrusel -->
+	<div class="carousel-container" id="carousel">
+		<div id="carousel-background" class="carousel-background"></div>
+		<div id="carousel" class="carousel">
+			<div id="carousel-inner" class="carousel-inner">
+				<!-- Las imágenes se insertarán aquí -->
+			</div>
 		</div>
 	</div>
-	
 
-<div id="vid" class="slideshow-container" onclick="refocus()">
+	<div id="btnin">
+		<input type="text" id="barcode" autofocus />
+		<label id="barcodeLabel"></label>
+	</div>
 
-	<?php
-		$dir_handle = opendir("img/");
-		while(($file_name = readdir($dir_handle)) !== false) 
-		{ 
-			if (strlen($file_name)>3)
-			{
-				echo '<div class="mySlides fade">';
-				echo '<img src="img/'.$file_name.'" class="imagenesslideshow" onclick="refocus()">';
-				echo '</div>';
+	<!-- Logo -->
+	<div id="logo" class="logo hidden">
+		<img src="../../data/logo/image.png" alt="Logo">
+	</div>
+
+	<!-- Footer -->
+	<div id="footer" class="footer hidden">
+		<img src="../../data/footer/image.jpg" alt="Footer">
+	</div>
+
+	<script>
+		// Pasar la variable de sesión de PHP a JavaScript
+		const showTimeVar = <?php echo $_SESSION['showTime']; ?>;
+		const slideTime = <?php echo $_SESSION['slideTime']; ?>;
+		const show = <?php echo $config['show']; ?>;
+		let currentIndex = 0;
+		const carousel = document.getElementById('carousel');
+		const barcodeInput = document.getElementById('barcode');
+		const barcodeLabel = document.getElementById('barcodeLabel');
+		const logo = document.getElementById('logo');
+		const footer = document.getElementById('footer');
+
+		async function fetchImages() {
+			const response = await fetch('getImages.php');
+			const images = await response.json();
+			const carouselInner = document.getElementById('carousel-inner');
+			images.forEach(image => {
+				const imgDiv = document.createElement('div');
+				imgDiv.classList.add('carousel-item');
+				imgDiv.innerHTML = `<img src="../../${image}" class="w-full">`;
+				carouselInner.appendChild(imgDiv);
+			});
+			showSlide(currentIndex);
+			setInterval(nextSlide, slideTime); // Cambia cada 3 segundos
+		}
+
+		function showSlide(index) {
+			const slides = document.querySelectorAll('.carousel-item');
+			const carouselInner = document.getElementById('carousel-inner');
+			carouselInner.style.transform = `translateX(-${index * 100}%)`;
+			updateBackground(slides[index].querySelector('img').src);
+		}
+
+		function nextSlide() {
+			const slides = document.querySelectorAll('.carousel-item');
+			currentIndex = (currentIndex + 1) % slides.length;
+			showSlide(currentIndex);
+		}
+
+		function updateBackground(imageUrl) {
+			const carouselBackground = document.getElementById('carousel-background');
+			carouselBackground.style.backgroundImage = `url(${imageUrl})`;
+		}
+
+		window.onload = function () {
+			fetchImages();
+			barcodeInput.classList.remove('active'); // Inicialmente oculto
+			if (show === 1) {
+				logo.classList.remove('hidden');
+				footer.classList.remove('hidden');
 			}
-		}
-		closedir($dir_handle);
-	?>
+		};
 
-</div>
-
-<div id="btnin">
-	<input type="text" id="txtcodein" autofocus />
-</div>
-
-<div class="hide" id="content">
-
-<p style="clear:both"><br>
-<script>  
-	var content = document.getElementById("content");
-	var vid = document.getElementById("vid");
-	var vprecio = document.getElementById("vprecio");
-	var temporizador;
-	var pejemplo = "";
-	var nejemplo = "";
-	var dejemplo="";
-	var fejemplo = "";
-	
-	
-	$("#txtcodein").keypress(function(event) { 
-	
-         if (event.keyCode === 13) { 
-			var input = document.getElementById("txtcodein").value;
-			
-			clearTimeout(temporizador);
-			parse(input);
-		 } 
-     }); 
-	function parse(input) 
-	{	
-		if (!isNaN(input)){
-			buscacodigo(input);
-			input = "";
+		// Función searchItem
+		function searchItem() {
+			carousel.style.visibility = 'hidden';
+			setTimeout(function () {
+				barcodeLabel.textContent = barcodeInput.value;
+				barcodeLabel.classList.add('active');
+				if (show === 0) {
+					logo.classList.remove('hidden');
+					footer.classList.remove('hidden');
+				}
+			}, 500); // Esperar 200 ms antes de ejecutar la lógica
+			setTimeout(function () {
+				carousel.style.visibility = 'visible';
+				barcodeInput.value = "";
+				barcodeLabel.classList.remove('active');
+				if (show === 0) {
+					logo.classList.add('hidden');
+					footer.classList.add('hidden');
+				}
+			}, showTimeVar); // Esperar showTimeVar milisegundos antes de ejecutar la lógica
 		}
 
-	}
-	
-	function buscacodigo(input) {
-		vfprecio(input,pejemplo,nejemplo,dejemplo);
-		hidevideo();
-	}
-			 
-	function hideinfo() {
-		vid.style.display = "block";
-		vprecio.style.display="none";
-	 }
-	 
-	function hidevideo() {
-	document.getElementById("txtcodein").value = "";
-	vprecio.style=display = "flex";
-	temporizador = setTimeout(function(){
-		vprecio.style.display = "none";
-		//document.getElementById("codinput").innerHTML = "";
-		document.getElementById("preciov").innerHTML = "";
-		//document.getElementById("descripv").innerHTML = "";
-		document.getElementById("nombrev").innerHTML = "";
-		//document.getElementById("fotov").src = "";
-		},6000);
-	}
-
-function vfprecio(input,pejemplo,nejemplo) {
-	return $.ajax({	
-		url:'consulta.php',
-		data: {
-			"cia":"001",
-			"codigo":input,
-			"json":"1",
-			"token":999994,
-		},
-		cache:false,
-		type: "GET",
-		success: function(data) {
-			response=$.parseJSON(data);
-			haypromo=response['haypromo'];
-			preciopromo=response['vpromo']
-			nejemplo=response['desc_general']
-			pejemplo=response['precio_new']
-			muestratxt(haypromo,preciopromo,nejemplo,pejemplo,'','');
-		},
-		error: function (xhr) {
-			muestratxt(0,'','Codigo no encontrado','','','');
-		}
-	}); 
-
-
-	
-}
-
-/*
-	function vfprecio(input,pejemplo,nejemplo) { //funcion de verificacion de precios
-		return $.ajax({
-			url:'http://maylnxwebd01.machetazo.com/reportes/php/consultapreciosXML_TEST.php?cia=001&codigo='.input.'&json=1&token=999994', //se envia el codigo capturado a traves de ajax
-			type:'GET',
-			input:input,
-			contentType:'application/json',
-			dataType:'text',
-			cache:false,
-			processData:false,
-			success:function(data){ // se reciben los datos resultantes
-				response=$.parseJSON(data);
-				//nejemplo=response['desc_general']
-				//pejemplo=response['precio_new']
-				//haypromo
-				//vpromo
-	
-				muestratxt(nejemplo,pejemplo,'','');
-				console.log("nejemplo:"+nejemplo+"  pejemplo:"+pejemplo);
-			},
-			error:function(ts){
-				console.log(ts.responseText);//$("#senderMsg").html("Error en AJAX ");
+		$("#barcode").keypress(function (event) {
+			searchItem();
+			if (event.keyCode === 13) {
+				event.preventDefault();
 			}
 		});
-	*/
-	function dolla(precio){
-		if (precio < 1) { precio = "0"+precio.toString();}  // If less than a dollar, format the value to display correctly
-		var p = parseFloat(precio,10); 
-		var pi =p.toFixed(2);
-		return pi;
-	}
-	function muestratxt(haypromo,preciopromo,nombre,precio,descrip,codigo) {
-		
-		var pi=dolla(precio);
-		if (haypromo == 1) {
-			document.getElementById("tituloprecio").innerHTML = "PRECIO REGULAR: B/."+pi+"<br>PRECIO PROMOCIONAL:";
-			document.getElementById("nombrev").innerHTML = nombre; // gets the object and assigns the value
-			document.getElementById("descripv").innerHTML = descrip; // gets the object and assigns the value
-			var ppromo = dolla(preciopromo);
-			document.getElementById("preciov").innerHTML = "B/."+ppromo;
+
+		let lastUpdate = null;
+
+		function checkForUpdates() {
+			fetch('../includes/check-updates.php')
+				.then(response => response.json())
+				.then(data => {
+					if (lastUpdate === null) {
+						lastUpdate = data.lastUpdate;
+						console.log(lastUpdate);
+					} else if (lastUpdate !== data.lastUpdate) {
+						location.reload(true);
+					}
+				})
+				.catch(error => console.error('Error checking for updates:', error));
 		}
-		else {
-			document.getElementById("nombrev").innerHTML = nombre; // gets the object and assigns the value
-		document.getElementById("descripv").innerHTML = descrip; // gets the object and assigns the value
-		
-		console.log(pi);
-		document.getElementById("preciov").innerHTML = "B/."+pi;
-		}
-		
-	}
-// aca comienza el otro codigo
 
-	var slideIndex = 0;
-	showSlides();
-
-function showSlides() {
-       var i;
-       var slides = document.getElementsByClassName("mySlides");
-       for (i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
-       }
-       slideIndex++;
-       if(slideIndex > slides.length) {slideIndex = 1}
-       slides[slideIndex-1].style.display = "block";
-       setTimeout(showSlides,<?php $myfile = fopen("conf/settings.txt", "r") or die("Unable to open file!"); echo fread($myfile,filesize("conf/settings.txt"));  fclose($myfile); ?>);
-   
-}
-
-function refocus() {
-	$('#txtcodein').focus();
-
-}
-</script>
-
-</div>
+		// Check for updates every 10 seconds
+		setInterval(checkForUpdates, 10000);
+	</script>
 </body>
+
 </html>

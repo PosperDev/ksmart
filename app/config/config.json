@@ -5,18 +5,18 @@
         "mariadb": {
             "host": "localhost",
             "port": "",
-            "username": "",
+            "username": "root",
             "password": "",
-            "database": "",
-            "command": ""
+            "database": "test",
+            "command": "SELECT * FROM name where id = ?"
         },
         "mysql": {
-            "host": "localhost2",
-            "port": "3306",
-            "username": "your_username",
-            "password": "your_password",
-            "database": "your_database",
-            "command": "SELECT * FROM your_database"
+            "host": "localhost",
+            "port": "3308",
+            "username": "root",
+            "password": "root",
+            "database": "world",
+            "command": "SELECT * FROM city where id = ?"
         },
         "sqlserver": {
             "host": "SQLEXPRESS",
@@ -25,7 +25,7 @@
             "password": "",
             "database": "test",
             "command": "",
-            "auth": "wa"
+            "auth": "u"
         },
         "excel": {
             "file_path": "path\/to\/your\/excel_file.xlsx",
@@ -33,5 +33,7 @@
             "command": "SELECT * FROM [Sheet1$]"
         }
     },
-    "time": "2"
+    "time": "3",
+    "slideTime": "4",
+    "show": "0"
 }

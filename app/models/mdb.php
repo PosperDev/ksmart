@@ -31,8 +31,15 @@ class Model
         $stmt = $conn->prepare($sql);
         $stmt->execute([$barcode]);
 
+        /*
+        $stmt2 = $conn->prepare($sql);
+        $stmt2->execute([$barcode]);
+
+        $stmt3 = $conn->prepare($sql);
+        $stmt4 ->execute([$barcode]);
+        */
+
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
 }
 ?>
